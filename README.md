@@ -179,7 +179,9 @@ Request Params: ``` :id ``` - id of host to update
 
 Request Body - with fields to update: 
 ```
-{ 'host_name': 'John Doe'}
+{
+  "host_name": "John Doe" 
+}
 ```
 
 Response:
