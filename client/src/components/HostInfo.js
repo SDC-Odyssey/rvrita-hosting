@@ -32,7 +32,7 @@ class HostInfo extends React.Component {
     let queryString = window.location.search;
     if (!queryString.length) {
       let pathname = window.location.pathname.split('/').pop();
-      if (pathname === undefined || pathname === 'blank') {
+      if (pathname === undefined || pathname === 'blank' || pathname === false) {
         this.getHostInfoById(1);
         // this.getProfilePicture(1);
       } else {

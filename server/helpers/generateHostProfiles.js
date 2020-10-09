@@ -1,7 +1,7 @@
 var faker = require('faker');
 var randomId = require('randomatic');
 
-var generateHostProfiles = () => {
+var generateHostProfiles = (count, startingId=0) => {
   var hostProfiles = [];
   var localhost = 'http://localhost:3006';
   var languages = ['English', 'French', 'Spanish', 'Chinese', 'German', 'Tamil', 'Russian', 'Japanese'];
@@ -10,7 +10,7 @@ var generateHostProfiles = () => {
     return Math.floor(Math.random() * languages.length);
   }
 
-  for (var i = 1; i < 101; i++) {
+  for (var i = startingId + 1; i < startingId + count + 1; i++) {
     let hostHasCohost = faker.random.boolean();
     let coHostName = '';
     if (hostHasCohost) {
@@ -18,7 +18,7 @@ var generateHostProfiles = () => {
     }
 
     hostProfiles.push({
-      "_id": i,
+      "id": i,
       "host_url": `${localhost}/users/show/${i}`,
       "host_name": faker.name.firstName(),
       "cohost_name": coHostName,

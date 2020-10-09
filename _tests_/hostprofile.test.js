@@ -40,24 +40,24 @@ describe("Test Host Profile component: ", () => {
     done();
   });
 
-  it("Check whether the getReviewCount function is executed correctly", (done) => {
-    const spy = jest.spyOn(HostInfo.prototype, 'getReviewCount');
-    const component = renderer.create(<HostInfo />).getInstance();
-    component.getReviewCount(1);
-    expect(spy).toBeCalled();
-    done();
-  });
+  // it("Check whether the getReviewCount function is executed correctly", (done) => {
+  //   const spy = jest.spyOn(HostInfo.prototype, 'getReviewCount');
+  //   const component = renderer.create(<HostInfo />).getInstance();
+  //   component.getReviewCount(1);
+  //   expect(spy).toBeCalled();
+  //   done();
+  // });
 
   it("Check whether the state is updated correctly", (done) => {
     const component = renderer.create(<HostInfo />);
     const instance = component.getInstance();
     const instance1 = component.root;
-    expect(instance.state.reviewCount).toBe(0);
+    // expect(instance.state.reviewCount).toBe(0);
     instance.setState({
-      reviewCount: 123,
+      // reviewCount: 123,
       hostInfo: hostInfo
     });
-    expect(instance.state.reviewCount).toBe(123);
+    // expect(instance.state.reviewCount).toBe(123);
     expect(instance1.findByProps({ className: 'security-txt' }).children[0]).toContain('To protect your payment, never transfer money or communicate outside of the Airbnb website or app.');
     done();
   });

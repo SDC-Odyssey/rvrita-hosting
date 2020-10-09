@@ -33,7 +33,7 @@ app.use(express.static(`${__dirname}/../client/dist`));
 app.get('/hostInfo', (req, res) => {
   HostProfile.find({})
     .then((data) => {
-      console.log('Successfully able to get data from Host profile DB');
+      console.log('Successfully got all data from Host profile DB');
       res.send(data);
     })
     .catch((err) => {
@@ -59,7 +59,7 @@ app.post('/hostInfo', (req, res) => {
 // CRUD - Read
 app.get('/hostInfo/:hostId', (req, res) => {
   console.log('Parameter send by id in the req: ', req.params.hostId);
-  HostProfile.findById(req.params.hostId)
+  HostProfile.findOne({ id: req.params.hostId })
     .then((data) => {
       if (!data) {
         res.status(404).send({ message: 'Unable to find the Host profile by id' });
@@ -69,7 +69,7 @@ app.get('/hostInfo/:hostId', (req, res) => {
       }
     })
     .catch((err) => {
-      console.log('Error retrieving blog id from DB: ', err);
+      console.log('Error retrieving id from DB: ', err);
       res.status(500).send({ message: 'Error retrieving host id from DB' });
     });
 });
@@ -78,7 +78,7 @@ app.get('/hostInfo/:hostId', (req, res) => {
 app.put('/hostInfo/:hostId', (req, res) => {
   console.log('Parameter send by id in the req: ', req.params);
   const id = req.params.hostId;
-  HostProfile.findByIdAndUpdate(id, req.body, { useFindAndModify: false, new: true })
+  HostProfile.findOneAndUpdate(id, req.body, { useFindAndModify: false, new: true })
     .then((data) => {
       if (!data) {
         res.status(404).send({
@@ -101,7 +101,7 @@ app.put('/hostInfo/:hostId', (req, res) => {
 app.delete('/hostInfo/:hostId', (req, res) => {
   console.log('Parameter send by id in the req: ', req.params);
   const id = req.params.hostId;
-  HostProfile.findByIdAndRemove({ _id: id })
+  HostProfile.findOneAndDelete({ id })
     .then((data) => {
       if (!data) {
         res.status(404).send({
