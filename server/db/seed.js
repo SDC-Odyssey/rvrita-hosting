@@ -1,8 +1,9 @@
+// more info in the journal
 const generateHostProfiles = require('../helpers/generateHostProfiles')
 const { spawnSync } = require('child_process');
 
-const numberOfRecordsToInsert = 10000000;
-const batchSize = 1000000;
+const numberOfRecordsToInsert = 4000000;
+const batchSize = 400000;
 let recordsRemaining = numberOfRecordsToInsert;
 let startingId = 0;
 
@@ -26,10 +27,6 @@ while (recordsRemaining > 0) {
   startingId += currentBatchSize;
 }
 
-
-
-
-
 /*
 
 // const mongoose = require('mongoose');
@@ -49,7 +46,7 @@ let startingId = 0;
 
 console.log('Seeding %d records with batch size %d.', numberOfRecordsToInsert, batchSize);
 const proc = spawn('mongoimport', ['--drop', '--jsonArray', '--collection=hostprofiles', '--uri="mongodb://localhost/hostInfo"', '--numInsertionWorkers=8']);
-// Echo mongoimport activity to console
+// To see mongoimport activity in the console
 proc.stderr.on('data', (data) => {
   console.warn(data.toString());
 });
@@ -58,7 +55,7 @@ const s = new Readable();
 while (recordsRemaining > 0) {
   const currentBatchSize = Math.min(recordsRemaining, batchSize);
 
-  console.log('Generating %d records...', currentBatchSize);
+  console.log(`Generating ${currentBatchSize} records...`);
   const sampleHostProfiles = generateHostProfiles(currentBatchSize, startingId);
   console.log('Importing records to mongo...');
   // proc.stdin.write(JSON.stringify(sampleHostProfiles));
@@ -73,5 +70,4 @@ while (recordsRemaining > 0) {
 
 // null to end stream (like EOF - end of file)
 s.push(null);
-
 */
