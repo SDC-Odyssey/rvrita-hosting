@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
-const db = require('../index');
+require('../index');
 
 const hostProfileSchema = new mongoose.Schema({
-  _id: {
+  id: {
     type: Number,
+    required: true,
     unique: true,
     index: true
   },
@@ -21,15 +22,18 @@ const hostProfileSchema = new mongoose.Schema({
   host_verifications: Array,
   host_languages: Array
 },
-{ timestamps: true }
+  {
+    timestamps: true
+  }
 );
 
-hostProfileSchema.method("toJSON", function() {
-  const { __v, _id, ...object } = this.toObject();
-  object.id = _id;
-  return object;
-});
+// hostProfileSchema.method("toJSON", function() {
+//   const { __v, _id, ...object } = this.toObject();
+//   object.id = _id;
+//   return object;
+// });
 
 const HostProfile = mongoose.model('HostProfile', hostProfileSchema);
+HostProfile.createIndexes();
 
 module.exports = HostProfile;
