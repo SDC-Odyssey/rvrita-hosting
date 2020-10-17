@@ -1,4 +1,3 @@
-
 CREATE TABLE hostinfo (
   id SERIAL NOT NULL PRIMARY KEY,
   host_url TEXT,
@@ -9,7 +8,7 @@ CREATE TABLE hostinfo (
   host_identity_verified BOOLEAN,
   host_is_superHost BOOLEAN,
   host_has_profile_pic BOOLEAN,
-  host_has_coHost BOOLEAN,
+  host_has_cohost BOOLEAN,
   host_response_time INTEGER,
   host_listings_count INTEGER,
   host_verifications TEXT[],

@@ -33,9 +33,7 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 const schema = fs.readFileSync(path.resolve(__dirname, './models/schema.sql')).toString();
-const queries = schema.split(';\n');
-
-// ------------------ pg-promise
+// const queries = schema.split(';\n');
 
 const pgp = require('pg-promise')();
 const cn = {
@@ -48,51 +46,98 @@ const cn = {
 };
 const db = pgp(cn);
 // console.log('query:',schema);
+// const sampleHostProfiles = generateHostProfiles(1000000);
+// console.log(sampleHostProfiles);
+// db.task(async t => {
+//   for (let i = 0; i < queries.length; i++) {
+//     console.log('!!!',queries[i]);
+//     await t.oneOrNone(queries[i]);
+//   }
+// })
 db.task(async t => {
-  for (let i = 0; i < queries.length; i++) {
-    console.log('!!!',queries[i]);
-    await t.one(queries[i]);
-  }
+  await t.oneOrNone(schema);
 })
-.then(events => {
-  console.log('Events:', events);
-})
-.catch(error => {
-  console.log('ERROR:', error);
-});
+  .then(events => {
+    console.log('schema created');
 
-// db.multi(schema)
-//     .then(data => {
-//         console.log(data.id); // print new user id;
-//     })
-//     .catch(error => {
-//         console.log('ERROR:', error); // print error;
-//     });
+    const cs = new pgp.helpers.ColumnSet([
+      'id',
+      'host_url',
+      'host_name',
+      'cohost_name',
+      'host_about',
+      'host_messages',
+      'host_identity_verified',
+      'host_is_superhost',
+      'host_has_profile_pic',
+      'host_has_cohost',
+      'host_response_time',
+      'host_listings_count',
+      'host_verifications',
+      'host_languages',
+      { name: 'created_at', mod: '^', def: 'CURRENT_TIMESTAMP' },
+      { name: 'modified_at', mod: '^', def: 'CURRENT_TIMESTAMP' }
+    ], { table: 'hostinfo' });
 
-db.one('INSERT INTO hostinfo(host_name, cohost_name) VALUES($1, $2)', ['John', 'Hi'])
-    .then(data => {
-        console.log(data); // print new user id;
+    function getNextData(t, pageIndex) {
+      const batchSize = 10000;
+      let data = null;
+      if (pageIndex < 1000) {
+        data = generateHostProfiles(batchSize, batchSize * (pageIndex + 1));
+      }
+      return Promise.resolve(data);
+    }
+
+    db.tx('massive-insert', t => {
+      const processData = data => {
+        if (data) {
+          console.log('Importing records to postgres...');
+          const insert = pgp.helpers.insert(data, cs);
+          return t.none(insert);
+        }
+      };
+      return t.sequence(index => getNextData(t, index).then(processData));
     })
-    .catch(error => {
-        console.log('ERROR:', error); // print error;
-    });
+      .then(data => {
+        console.log('Total batches:', data.total, ', Duration:', data.duration);
+      })
+      .catch(error => {
+        console.log(error);
+      });
 
+    // Creating a reusable/static ColumnSet for generating INSERT queries:    
+    // const cs = new pgp.helpers.ColumnSet([
+    //   'id',
+    //   'host_url',
+    //   'host_name',
+    //   'cohost_name',
+    //   'host_about',
+    //   'host_messages',
+    //   'host_identity_verified',
+    //   'host_is_superhost',
+    //   'host_has_profile_pic',
+    //   'host_has_cohost',
+    //   'host_response_time',
+    //   'host_listings_count',
+    //   'host_verifications',
+    //   'host_languages',
+    //   {name: 'created_at', mod: '^', def: 'CURRENT_TIMESTAMP'},
+    //   {name: 'modified_at', mod: '^', def: 'CURRENT_TIMESTAMP'}
+    // ], {table: 'hostinfo'});
 
-// ---------------- node-postgres
+    // const insert = pgp.helpers.insert(sampleHostProfiles, cs);
+    // //=> INSERT INTO "products"("title","price","units")
+    // //   VALUES('red apples',2.35,1000),('large oranges',4.5,1)
 
-// const { Pool } = require('pg');
-// const pool = new Pool();
-// pool
-//   .connect()
-//   .then(client => {
-//     return client
-//       .query('DROP TABLE IF EXISTS hostinfo')
-//       .then(res => {
-//         client.release();
-//         console.log(res.rows[0]);
-//       })
-//       .catch(err => {
-//         client.release();
-//         console.log(err.stack);
-//       });
-//   });
+    // db.none(insert)
+    //     .then(() => {
+    //       console.log('records inserted');
+    //     })
+    //     .catch(error => {
+    //       console.log(error);
+    //     });
+
+  })
+  .catch(error => {
+    console.log('ERROR:', error);
+  });
