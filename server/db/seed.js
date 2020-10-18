@@ -51,59 +51,65 @@ const db = pgp(cn);
 // db.task(async t => {
 //   for (let i = 0; i < queries.length; i++) {
 //     console.log('!!!',queries[i]);
-//     await t.oneOrNone(queries[i]);
+//     await t.one(queries[i]);
 //   }
 // })
+
+// ------ pg promise massive insert
 db.task(async t => {
   await t.oneOrNone(schema);
 })
-  .then(events => {
-    console.log('schema created');
+//   .then(events => {
+//     console.log('schema created');
 
-    const cs = new pgp.helpers.ColumnSet([
-      'id',
-      'host_url',
-      'host_name',
-      'cohost_name',
-      'host_about',
-      'host_messages',
-      'host_identity_verified',
-      'host_is_superhost',
-      'host_has_profile_pic',
-      'host_has_cohost',
-      'host_response_time',
-      'host_listings_count',
-      'host_verifications',
-      'host_languages',
-      { name: 'created_at', mod: '^', def: 'CURRENT_TIMESTAMP' },
-      { name: 'modified_at', mod: '^', def: 'CURRENT_TIMESTAMP' }
-    ], { table: 'hostinfo' });
+//     const cs = new pgp.helpers.ColumnSet([
+//       'id',
+//       'host_url',
+//       'host_name',
+//       'cohost_name',
+//       'host_about',
+//       'host_messages',
+//       'host_identity_verified',
+//       'host_is_superhost',
+//       'host_has_profile_pic',
+//       'host_has_cohost',
+//       'host_response_time',
+//       'host_listings_count',
+//       'host_verifications',
+//       'host_languages',
+//       { name: 'created_at', mod: '^', def: 'CURRENT_TIMESTAMP' },
+//       { name: 'modified_at', mod: '^', def: 'CURRENT_TIMESTAMP' }
+//     ], { table: 'hostinfo' });
 
-    function getNextData(t, pageIndex) {
-      const batchSize = 10000;
-      let data = null;
-      if (pageIndex < 1000) {
-        data = generateHostProfiles(batchSize, batchSize * (pageIndex + 1));
-      }
-      return Promise.resolve(data);
-    }
+//     function getNextData(t, pageIndex) {
+//       const batchSize = 10000;
+//       let data = null;
+//       if (pageIndex < 1000) {
+//         data = generateHostProfiles(batchSize, batchSize * pageIndex + 1);
+//       }
+//       return Promise.resolve(data);
+//     }
 
-    db.tx('massive-insert', t => {
-      const processData = data => {
-        if (data) {
-          console.log('Importing records to postgres...');
-          const insert = pgp.helpers.insert(data, cs);
-          return t.none(insert);
-        }
-      };
-      return t.sequence(index => getNextData(t, index).then(processData));
-    })
-      .then(data => {
-        console.log('Total batches:', data.total, ', Duration:', data.duration);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+//     db.tx('massive-insert', t => {
+//       const processData = data => {
+//         if (data) {
+//           console.log('Importing records to postgres...');
+//           const insert = pgp.helpers.insert(data, cs);
+//           return t.none(insert);
+//         }
+//       };
+//       return t.sequence(index => getNextData(t, index).then(processData));
+//     })
+//       .then(data => {
+//         console.log('Total batches:', data.total, ', Duration:', data.duration);
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       });
+
+
+
+
 
     // Creating a reusable/static ColumnSet for generating INSERT queries:    
     // const cs = new pgp.helpers.ColumnSet([
@@ -137,7 +143,7 @@ db.task(async t => {
     //       console.log(error);
     //     });
 
-  })
-  .catch(error => {
-    console.log('ERROR:', error);
-  });
+  // })
+  // .catch(error => {
+  //   console.log('ERROR:', error);
+  // });

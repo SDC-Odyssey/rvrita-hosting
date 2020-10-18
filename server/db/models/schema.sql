@@ -1,5 +1,6 @@
+DROP TABLE IF EXISTS hostinfo;
 CREATE TABLE hostinfo (
-  id SERIAL NOT NULL PRIMARY KEY,
+  id SERIAL NOT NULL,
   host_url TEXT,
   host_name TEXT,
   cohost_name TEXT,
