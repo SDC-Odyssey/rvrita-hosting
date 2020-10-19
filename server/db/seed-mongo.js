@@ -2,8 +2,8 @@
 const generateHostProfiles = require('../helpers/generateHostProfiles')
 const { spawnSync } = require('child_process');
 
-const numberOfRecordsToInsert = 10000000;
-const batchSize = 1000000;
+const numberOfRecordsToInsert = 1000;
+const batchSize = 100;
 
 let recordsRemaining = numberOfRecordsToInsert;
 let startingId = 0;

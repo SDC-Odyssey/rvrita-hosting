@@ -39,6 +39,7 @@ var generateHostProfiles = (count, startingId=0) => {
         languages[getRandomLangIndex()], 
         languages[getRandomLangIndex()],
       ],
+      createdAt: {'$date':{'$numberLong':'1565546054692'}}
     });
 
   }

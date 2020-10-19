@@ -58,7 +58,7 @@ app.post('/hostInfo', (req, res) => {
 
 // CRUD - Read
 app.get('/hostInfo/:hostId', (req, res) => {
-  console.log('Parameter send by id in the req: ', req.params.hostId);
+  console.log('Parameter send by id in the req: ', req.params);
   HostProfile.findOne({ id: req.params.hostId })
     .then((data) => {
       if (!data) {
