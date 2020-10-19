@@ -12,3 +12,4 @@ globalConfig.json
 config
 
 .env
+seed-postgres-old.js

@@ -14,6 +14,6 @@ CREATE TABLE hostinfo (
   host_listings_count INTEGER,
   host_verifications TEXT[],
   host_languages TEXT[],
-  modified_at TIMESTAMP,
-  created_at TIMESTAMP
+  modified_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );

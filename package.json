@@ -8,7 +8,8 @@
     "start": "nodemon server/index.js",
     "build": "webpack --watch",
     "dev:build": "webpack-dev-server --open=8081",
-    "seed": "node ./server/db/seed.js",
+    "seed:mongo": "node ./server/db/seed-mongo.js",
+    "seed:postgres": "node ./server/db/seed-postgres.js",
     "dev:json": "json-server ./server/helpers/hostProfile.json"
   },
   "jest": {

@@ -4,26 +4,24 @@ const fs = require('fs');
 const path = require('path');
 const Readable = require('stream').Readable;
 require('dotenv').config();
-// const schema = fs.readFileSync(path.resolve(__dirname, './models/schema.sql')).toString();
-
 const psql = '/Library/PostgreSQL/13/bin/psql';
-const numberOfRecordsToInsert = 1000000;
+
+const numberOfRecordsToInsert = 100000;
 const batchSize = 10000;
+
+
 let recordsRemaining = numberOfRecordsToInsert;
 let startingId = 0;
 
-console.log('Seeding %d records with batch size %d.', numberOfRecordsToInsert, batchSize);
+console.log(`Seeding ${numberOfRecordsToInsert} records with batch size ${batchSize}.`);
 
+// loading the schema
 spawnSync(psql, [
   '-f', path.resolve(__dirname, './models/schema.sql')
 ]);
 
+// running psql from Node
 const proc = spawn(psql, [
-  // process.env.PGDATABASE,
-  // '-h', process.env.PGHOST,
-  // '-p', process.env.PGPORT,
-  // '-U', process.env.PGUSER,
-  // process.env.PGPASSWORD <-- psql will use this environment variable
   '-c', `COPY hostinfo (`+
             `id,`+
             `host_url,`+
@@ -41,38 +39,41 @@ const proc = spawn(psql, [
             `host_languages`+
           `) FROM STDIN`
 ]);
-// Echo mongoimport activity to console
-proc.stderr.on('data', (data) => {
-  console.warn(data.toString());
+
+// To see psql activity in the console
+proc.stdout.on('data', (data) => {
+  console.log('Psql STDOUT: ' + data.toString());
 });
+
 const s = new Readable();
-// pipe the JSON string stream to mongoimport
+
+// using _read to make sure the stream data consumed and drained before the next batch will be pushed in
+s._read = function noop(size) {
+  let push = true;
+  console.log(`writeable stream reading ${size} bytes from readable`);
+
+  while (recordsRemaining > 0 && push === true) {
+    const currentBatchSize = Math.min(recordsRemaining, batchSize);
+    console.log(`readableLength: ${s.readableLength}, current batch size: ${currentBatchSize}`);
+    const sampleHostProfiles = generateHostProfiles(currentBatchSize, startingId);
+    console.log('Pushing records to stream...');
+    const text = toPsql(sampleHostProfiles);
+    push = s.push(text);
+    // console.log('push: ', push);
+    recordsRemaining -= currentBatchSize;
+    startingId += currentBatchSize;
+  }
+
+  if (recordsRemaining === 0) s.push(null);
+};
+
+// pipe the string stream to psql
 s.pipe(proc.stdin);
 
-setTimeout(() => {
-  console.log(`Current stream buffered bytes: ${s.readableLength} High water mark: ${s.readableHighWaterMark}`);
-}, 1000);
 
-while (recordsRemaining > 0) {
-  const currentBatchSize = Math.min(recordsRemaining, batchSize);
-  console.log(`Current stream buffered bytes: ${s.readableLength} High water mark: ${s.readableHighWaterMark}`);
+// ----------------- helper functions ----------------------
 
-  console.log(`Generating ${currentBatchSize} records...`);
-  const sampleHostProfiles = generateHostProfiles(currentBatchSize, startingId);
-  console.log('Importing records to postgres...');
-  const text = toPsql(sampleHostProfiles);
-  s.push(text);
-
-  recordsRemaining -= currentBatchSize;
-  startingId += currentBatchSize;
-}
-
-// explicit end of file marker 
-// s.push('\\.');
-// null to end stream (like EOF - end of file)
-s.push(null);
-
-// Postgres Text Format: https://www.postgresql.org/docs/13/sql-copy.html#id-1.9.3.55.9.2
+// Postgres text format for COPY: https://www.postgresql.org/docs/13/sql-copy.html#id-1.9.3.55.9.2
 function toPsql(rows) {
   return rows.map(toPsqlRow).join('\n') + '\n';
 }
