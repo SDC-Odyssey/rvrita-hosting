@@ -6,8 +6,8 @@ const Readable = require('stream').Readable;
 require('dotenv').config();
 const psql = '/Library/PostgreSQL/13/bin/psql';
 
-const numberOfRecordsToInsert = 100000;
-const batchSize = 10000;
+const numberOfRecordsToInsert = 10000000;
+const batchSize = 100000;
 
 
 let recordsRemaining = numberOfRecordsToInsert;
