@@ -18,20 +18,28 @@ var generateHostProfiles = (count, startingId=0) => {
     }
 
     hostProfiles.push({
-      "id": i,
-      "host_url": `${localhost}/users/show/${i}`,
-      "host_name": faker.name.firstName(),
-      "cohost_name": coHostName,
-      "host_about": faker.lorem.paragraph(),
-      "host_messages": faker.lorem.sentence(),
-      "host_identity_verified": faker.random.boolean(),
-      "host_is_superHost": faker.random.boolean(),
-      "host_has_profile_pic": faker.random.boolean(),
-      "host_has_coHost": hostHasCohost,
-      "host_response_time": faker.random.number({'min': 98, 'max': 100}),
-      "host_listings_count": faker.random.number({'min': 1, 'max': 5}),
-      "host_verifications": [faker.internet.email(), faker.phone.phoneNumber(), randomId('0000', 4)],
-      "host_languages": [languages[getRandomLangIndex()], languages[getRandomLangIndex()]],
+      id: i,
+      host_url: `${localhost}/users/show/${i}`,
+      host_name: faker.name.firstName(),
+      cohost_name: coHostName,
+      host_about: faker.lorem.paragraph(),
+      host_messages: faker.lorem.sentence(),
+      host_identity_verified: faker.random.boolean(),
+      host_is_superhost: faker.random.boolean(),
+      host_has_profile_pic: faker.random.boolean(),
+      host_has_cohost: hostHasCohost,
+      host_response_time: faker.random.number({'min': 98, 'max': 100}),
+      host_listings_count: faker.random.number({'min': 1, 'max': 5}),
+      host_verifications: [
+        faker.internet.email(), 
+        faker.phone.phoneNumber(), 
+        randomId('0000', 4),
+      ],
+      host_languages: [
+        languages[getRandomLangIndex()], 
+        languages[getRandomLangIndex()],
+      ],
+      createdAt: {'$date':{'$numberLong':'1565546054692'}}
     });
 
   }

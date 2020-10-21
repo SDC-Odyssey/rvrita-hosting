@@ -10,3 +10,6 @@ package-lock.json
 globalConfig.json
 
 config
+
+.env
+seed-postgres-old.js

@@ -8,7 +8,8 @@
     "start": "nodemon server/index.js",
     "build": "webpack --watch",
     "dev:build": "webpack-dev-server --open=8081",
-    "seed": "node ./server/db/seed.js",
+    "seed:mongo": "node ./server/db/seed-mongo.js",
+    "seed:postgres": "node ./server/db/seed-postgres.js",
     "dev:json": "json-server ./server/helpers/hostProfile.json"
   },
   "jest": {
@@ -77,9 +78,12 @@
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.2",
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mongodb": "^3.6.1",
     "mongoose": "^5.9.28",
+    "pg": "^8.4.1",
+    "pg-promise": "^10.7.0",
     "randomatic": "^3.1.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
