@@ -76,7 +76,7 @@ app.get('/hostInfo/:hostId', (req, res) => {
   const queryArgs = [req.params.hostId];
   db.query(query, queryArgs)
     .then((data) => {
-      if (!data) {
+      if (data.length === 0) {
         res.status(404).send({ message: 'Unable to find the Host profile by id' });
       } else {
         console.log('Host profile by id Data: ', req.url);
@@ -120,26 +120,28 @@ app.get('/hostInfo/:hostId', (req, res) => {
 // });
 
 // CRUD - Delete
-// app.delete('/hostInfo/:hostId', (req, res) => {
-//   console.log('Parameter send by id in the req: ', req.params);
-//   const id = req.params.hostId;
-//   HostProfile.findOneAndDelete({ id })
-//     .then((data) => {
-//       if (!data) {
-//         res.status(404).send({
-//           message: `No record with id ${id} was found!`,
-//         });
-//       } else {
-//         res.send({
-//           message: 'Host was deleted successfully!',
-//         });
-//       }
-//     })
-//     .catch((err) => {
-//       res.status(500).send({
-//         message: 'Error deleting the host by id',
-//       });
-//     });
-// });
+app.delete('/hostInfo/:hostId', (req, res) => {
+  console.log('Parameter send by id in the req: ', req.params);
+  const id = req.params.hostId;
+  const query = 'DELETE FROM hostinfo WHERE id=$1';
+  const queryArgs = [req.params.hostId];
+  db.query(query, queryArgs)
+    .then((data) => {
+      if (data === 1) {
+        res.status(404).send({
+          message: `No record with id ${id} was found!`,
+        });
+      } else {
+        res.send({
+          message: 'Host was deleted successfully!',
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: 'Error deleting the host by id',
+      });
+    });
+});
 
 module.exports = app;
