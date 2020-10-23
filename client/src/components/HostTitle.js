@@ -28,7 +28,7 @@ const HostTitle = ({ hostInfo, hostPic }) => {
       <span className="host-title">Hosted by {hostInfo.host_name}</span>
       {hostInfo.host_languages &&
         <div>
-          <span className="title-time">Joined in {moment(hostInfo.createdAt.split('').slice(0, 10).join('').split('-').join(''), 'YYYYMMDD').format("MMMM YYYY")}</span>
+          <span className="title-time">Joined in {moment(hostInfo.createdAt).format("MMM YYYY")}</span>
         </div>
        }
     </div>
