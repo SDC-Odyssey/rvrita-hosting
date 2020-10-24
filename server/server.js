@@ -78,7 +78,9 @@ app.get('/hostInfo/:hostId', (req, res) => {
 app.put('/hostInfo/:hostId', (req, res) => {
   console.log('Parameter send by id in the req: ', req.params);
   const id = req.params.hostId;
-  HostProfile.findOneAndUpdate(id, req.body, { useFindAndModify: false, new: true })
+  const toUpdate = req.body;
+  // HostProfile.findOneAndUpdate(id, update, { useFindAndModify: false, new: true })
+  HostProfile.findOneAndUpdate({ id }, {$set: toUpdate}, {upsert: true})
     .then((data) => {
       if (!data) {
         res.status(404).send({

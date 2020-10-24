@@ -17,3 +17,4 @@ CREATE TABLE hostinfo (
   modified_at TIMESTAMP NOT NULL DEFAULT NOW(),
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+CREATE INDEX id_idx ON hostinfo (id);
