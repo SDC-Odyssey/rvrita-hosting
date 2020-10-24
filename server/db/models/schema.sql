@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS hostinfo;
 CREATE TABLE hostinfo (
-  id SERIAL NOT NULL,
+  id SERIAL NOT NULL PRIMARY KEY,
   host_url TEXT,
   host_name TEXT,
   cohost_name TEXT,
@@ -18,3 +18,7 @@ CREATE TABLE hostinfo (
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 CREATE INDEX id_idx ON hostinfo (id);
+-- if idx gets out of sync run:
+-- CREATE SEQUENCE id_seq;
+-- ALTER TABLE hostinfo ALTER COLUMN id SET DEFAULT nextval('id_seq');
+-- SELECT setval('id_seq', (SELECT MAX(id) FROM hostinfo)+1);

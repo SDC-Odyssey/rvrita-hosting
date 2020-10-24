@@ -13,7 +13,7 @@ const pgp = require('pg-promise')();
 const {
   PGUSER, PGPASSWORD, PGHOST, PGPORT, PGDATABASE
 } = process.env;
-// const cn = `postgres://${PGUSER}:PGPASSWORD@PGHOST:PGPORT/PGDATABASE`;
+// const cn = `postgres://${PGUSER}:P${GPASSWORD}@${PGHOST}:${PGPORT}/${PGDATABASE}`;
 
 const db = pgp({
   host: PGHOST,
@@ -22,7 +22,6 @@ const db = pgp({
   password: PGPASSWORD,
   database: PGDATABASE,
 });
-// db.connect();
 
 const app = express();
 
@@ -57,18 +56,22 @@ app.get('/hostInfo', (req, res) => {
 });
 
 // CRUD - Create
-// app.post('/hostInfo', (req, res) => {
-//   console.log('Req.body with hostinfo: ', req.body);
-//   HostProfile.create(req.body)
-//     .then((resp) => {
-//       console.log('Successfully created new host');
-//       res.send('Successfully created new host');
-//     })
-//     .catch((err) => {
-//       console.log('Error creating host: ', err);
-//       res.status(500).send({ message: err.message });
-//     });
-// });
+app.post('/hostInfo', (req, res) => {
+  console.log('Req.body with hostinfo: ', req.body);
+  const query = 'INSERT INTO hostinfo (${fields:name}) VALUES (${values:list}) RETURNING id;';
+  db.query(query,{
+    fields: Object.keys(req.body),
+    values: Object.values(req.body)
+  })
+    .then((resp) => {
+      console.log('Successfully created new host', resp);
+      res.send({ message: 'Successfully created new host'});
+    })
+    .catch((err) => {
+      console.log('Error creating host: ', err);
+      res.status(500).send({ message: err.message });
+    });
+});
 
 // CRUD - Read
 app.get('/hostInfo/:hostId', (req, res) => {
