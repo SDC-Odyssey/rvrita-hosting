@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
+require('newrelic');
 const express = require('express');
 const responseTime = require('response-time');
 const path = require('path');
@@ -75,7 +76,8 @@ app.post('/hostInfo', (req, res) => {
 
 // CRUD - Read
 app.get('/hostInfo/:hostId', (req, res) => {
-  console.log('Parameter send by id in the req: ', req.params);
+  // console.log('Parameter send by id in the req: ', req.params);
+  // res.status(200).send('ok');
   const query = 'SELECT * FROM hostinfo WHERE id=$1';
   const queryArgs = [req.params.hostId];
   db.query(query, queryArgs)
@@ -83,12 +85,12 @@ app.get('/hostInfo/:hostId', (req, res) => {
       if (data.length === 0) {
         res.status(404).send({ message: 'Unable to find the Host profile by id' });
       } else {
-        console.log('Host profile by id Data: ', req.url);
+        // console.log('Host profile by id Data: ', req.url);
         res.send(data[0]);
       }
     })
     .catch((err) => {
-      console.log('Error retrieving id from DB: ', err);
+      // console.log('Error retrieving id from DB: ', err);
       res.status(500).send({ message: 'Error retrieving host id from DB' });
     });
 });
