@@ -10,12 +10,13 @@ export let options = {
       preAllocatedVUs: 100,
       maxVUs: 2000,
       stages: [
-        { duration: '10m', target: 1000 },
+        { duration: '10m', target: 1200 },
       ],
     },
   },
 };
 
+// POST route
 export default function () {
   var id = 9000000 + Math.floor(Math.random() * 1000000);
   var data = { host_name: 'Bert', cohost_name: 'Jane' };
@@ -26,17 +27,16 @@ export default function () {
   check(res, { 'status was 200': (r) => r.status == 200 });
 }
 
+// GET route
+export default function () {
+  var id = 9000000 + Math.floor(Math.random() * 1000000);
+  var res = http.get(`http://localhost:3006/hostinfo/${id}`, {
+    tags: { name: 'PostsItemURL' },
+  });
+  check(res, { 'status was 200': (r) => r.status == 200 });
+}
 
-
-
-// export default function () {
-//   var id = 9000000 + Math.floor(Math.random() * 1000000);
-//   var res = http.get(`http://localhost:3006/hostinfo/${id}`, {
-//     tags: { name: 'PostsItemURL' },
-//   });
-//   check(res, { 'status was 200': (r) => r.status == 200 });
-// }
-
+// testing with constant-arrival-rate executor
 // constant_request_rate: {
     //   executor: 'constant-arrival-rate',
     //   rate: 1000,

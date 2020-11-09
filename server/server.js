@@ -16,6 +16,7 @@ const {
 } = process.env;
 // const cn = `postgres://${PGUSER}:P${GPASSWORD}@${PGHOST}:${PGPORT}/${PGDATABASE}`;
 
+const app = express();
 const db = pgp({
   host: PGHOST,
   port: PGPORT,
@@ -23,8 +24,6 @@ const db = pgp({
   password: PGPASSWORD,
   database: PGDATABASE,
 });
-
-const app = express();
 
 app.use(cors());
 // app.use(compression());
@@ -42,6 +41,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(expressStaticGzip(path.join(__dirname, '/../client/dist')));
 
 app.use(express.static(`${__dirname}/../client/dist`));
+
 
 app.get('/hostInfo', (req, res) => {
   const query = 'SELECT * FROM hostinfo';
