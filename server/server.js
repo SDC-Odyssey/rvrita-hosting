@@ -27,19 +27,19 @@ const db = pgp({
 const app = express();
 
 app.use(cors());
-app.use(compression());
+// app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(responseTime());
+// app.use(responseTime());
 
-app.get('*.js', (req, res, next) => {
-  req.url += '.gz';
-  res.set('Content-Encoding', 'gzip');
-  res.set('Content-Type', 'text/javascript');
-  next();
-});
+// app.get('*.js', (req, res, next) => {
+//   req.url += '.gz';
+//   res.set('Content-Encoding', 'gzip');
+//   res.set('Content-Type', 'text/javascript');
+//   next();
+// });
 
-app.use(expressStaticGzip(path.join(__dirname, '/../client/dist')));
+// app.use(expressStaticGzip(path.join(__dirname, '/../client/dist')));
 
 app.use(express.static(`${__dirname}/../client/dist`));
 
@@ -58,18 +58,18 @@ app.get('/hostInfo', (req, res) => {
 
 // CRUD - Create
 app.post('/hostInfo', (req, res) => {
-  console.log('Req.body with hostinfo: ', req.body);
+  // console.log('Req.body with hostinfo: ', req.body);
   const query = 'INSERT INTO hostinfo (${fields:name}) VALUES (${values:list}) RETURNING id;';
   db.query(query,{
     fields: Object.keys(req.body),
     values: Object.values(req.body)
   })
     .then((resp) => {
-      console.log('Successfully created new host', resp);
+      // console.log('Successfully created new host', resp);
       res.send({ message: 'Successfully created new host'});
     })
     .catch((err) => {
-      console.log('Error creating host: ', err);
+      // console.log('Error creating host: ', err);
       res.status(500).send({ message: err.message });
     });
 });
@@ -97,7 +97,8 @@ app.get('/hostInfo/:hostId', (req, res) => {
 
 // CRUD - Update
 app.put('/hostInfo/:hostId', (req, res) => {
-  console.log('Parameter send by id in the req: ', req.params);
+  // console.log('Parameter send by id in the req: ', req.params);
+  // res.status(200).send('ok');
   const query = 'UPDATE hostinfo SET (${fields:name}) = (${values:list}) WHERE id=${id}';
   db.query(query,{
     fields: Object.keys(req.body),
@@ -116,7 +117,7 @@ app.put('/hostInfo/:hostId', (req, res) => {
       }
     })
     .catch((err) => {
-      console.log(err);
+      // console.log(err);
       res.status(500).send({
         message: 'Error updating the host by id',
       });
