@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
+require('newrelic');
 const express = require('express');
 const responseTime = require('response-time');
 const path = require('path');
@@ -15,6 +16,7 @@ const {
 } = process.env;
 // const cn = `postgres://${PGUSER}:P${GPASSWORD}@${PGHOST}:${PGPORT}/${PGDATABASE}`;
 
+const app = express();
 const db = pgp({
   host: PGHOST,
   port: PGPORT,
@@ -23,24 +25,23 @@ const db = pgp({
   database: PGDATABASE,
 });
 
-const app = express();
-
 app.use(cors());
-app.use(compression());
+// app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(responseTime());
+// app.use(responseTime());
 
-app.get('*.js', (req, res, next) => {
-  req.url += '.gz';
-  res.set('Content-Encoding', 'gzip');
-  res.set('Content-Type', 'text/javascript');
-  next();
-});
+// app.get('*.js', (req, res, next) => {
+//   req.url += '.gz';
+//   res.set('Content-Encoding', 'gzip');
+//   res.set('Content-Type', 'text/javascript');
+//   next();
+// });
 
-app.use(expressStaticGzip(path.join(__dirname, '/../client/dist')));
+// app.use(expressStaticGzip(path.join(__dirname, '/../client/dist')));
 
 app.use(express.static(`${__dirname}/../client/dist`));
+
 
 app.get('/hostInfo', (req, res) => {
   const query = 'SELECT * FROM hostinfo';
@@ -57,25 +58,26 @@ app.get('/hostInfo', (req, res) => {
 
 // CRUD - Create
 app.post('/hostInfo', (req, res) => {
-  console.log('Req.body with hostinfo: ', req.body);
+  // console.log('Req.body with hostinfo: ', req.body);
   const query = 'INSERT INTO hostinfo (${fields:name}) VALUES (${values:list}) RETURNING id;';
   db.query(query,{
     fields: Object.keys(req.body),
     values: Object.values(req.body)
   })
     .then((resp) => {
-      console.log('Successfully created new host', resp);
+      // console.log('Successfully created new host', resp);
       res.send({ message: 'Successfully created new host'});
     })
     .catch((err) => {
-      console.log('Error creating host: ', err);
+      // console.log('Error creating host: ', err);
       res.status(500).send({ message: err.message });
     });
 });
 
 // CRUD - Read
 app.get('/hostInfo/:hostId', (req, res) => {
-  console.log('Parameter send by id in the req: ', req.params);
+  // console.log('Parameter send by id in the req: ', req.params);
+  // res.status(200).send('ok');
   const query = 'SELECT * FROM hostinfo WHERE id=$1';
   const queryArgs = [req.params.hostId];
   db.query(query, queryArgs)
@@ -83,19 +85,20 @@ app.get('/hostInfo/:hostId', (req, res) => {
       if (data.length === 0) {
         res.status(404).send({ message: 'Unable to find the Host profile by id' });
       } else {
-        console.log('Host profile by id Data: ', req.url);
+        // console.log('Host profile by id Data: ', req.url);
         res.send(data[0]);
       }
     })
     .catch((err) => {
-      console.log('Error retrieving id from DB: ', err);
+      // console.log('Error retrieving id from DB: ', err);
       res.status(500).send({ message: 'Error retrieving host id from DB' });
     });
 });
 
 // CRUD - Update
 app.put('/hostInfo/:hostId', (req, res) => {
-  console.log('Parameter send by id in the req: ', req.params);
+  // console.log('Parameter send by id in the req: ', req.params);
+  // res.status(200).send('ok');
   const query = 'UPDATE hostinfo SET (${fields:name}) = (${values:list}) WHERE id=${id}';
   db.query(query,{
     fields: Object.keys(req.body),
@@ -114,7 +117,7 @@ app.put('/hostInfo/:hostId', (req, res) => {
       }
     })
     .catch((err) => {
-      console.log(err);
+      // console.log(err);
       res.status(500).send({
         message: 'Error updating the host by id',
       });

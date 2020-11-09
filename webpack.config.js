@@ -11,7 +11,7 @@ module.exports = {
   entry: './client/src/index.js',
   output: {
     path: path.resolve(__dirname, './client/dist'),
-    filename: 'bundle.[contentHash].js',
+    filename: 'bundle.js',
     publicPath: '/'
   },
   module: {
@@ -39,7 +39,7 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "[name].[contentHash].css"
+      filename: "[name].css"
     }),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({

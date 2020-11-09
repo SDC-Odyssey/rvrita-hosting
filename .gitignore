@@ -13,3 +13,5 @@ config
 
 .env
 seed-postgres-old.js
+
+newrelic.js
