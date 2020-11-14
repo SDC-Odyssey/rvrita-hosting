@@ -9,7 +9,7 @@ import SuperHost from './SuperHost';
 import HostVerify from './HostVerify';
 import Contact from './Contact';
 
-var serverUrl = 'http://localhost:3006';
+var serverUrl = '';
 
 class HostInfo extends React.Component {
   constructor(props) {
