@@ -1,22 +1,55 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
-require('newrelic');
+
+// require('newrelic'); 
+
 const express = require('express');
-const responseTime = require('response-time');
+// const responseTime = require('response-time');
 const path = require('path');
 const bodyParser = require('body-parser');
-const compression = require('compression');
-const expressStaticGzip = require('express-static-gzip');
+// const compression = require('compression');
+// const expressStaticGzip = require('express-static-gzip');
 const cors = require('cors');
 require('dotenv').config();
 const pgp = require('pg-promise')();
+
+const cache = require('express-redis-cache')();
+//cache.on('message', function (message) {
+//  console.log('cache says:', message);
+//});
+
+const app = express();
+
+const Memcached = require('memcached');
+const mem = new Memcached('localhost:11211');
+const responseCacheMiddleware = function(req, res, next) {
+	const key = req.originalUrl;
+	res.oldSend = res.send;
+	res.send = function(body) {
+		if (typeof body == 'string') {
+			//console.log('set memcached KEY: \n%s\n\nVALUE:\n%s\n', key, body.toString().substr(0, 25));
+			mem.set(key, body, 86400
+				, (err,r)=>{ 
+				//	console.log('mem.set()',err,r);
+				}
+			);
+		}
+		res.oldSend(body);
+	}
+	next();
+};
+// Enable/Disable Memcached:
+app.use(responseCacheMiddleware);
+
+// Enable/Disable Etags:
+app.set('etag', false);
+
 const {
   PGUSER, PGPASSWORD, PGHOST, PGPORT, PGDATABASE
 } = process.env;
 // const cn = `postgres://${PGUSER}:P${GPASSWORD}@${PGHOST}:${PGPORT}/${PGDATABASE}`;
 
-const app = express();
 const db = pgp({
   host: PGHOST,
   port: PGPORT,
@@ -26,10 +59,11 @@ const db = pgp({
 });
 
 app.use(cors());
-// app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 // app.use(responseTime());
+// app.use(compression());
 
 // app.get('*.js', (req, res, next) => {
 //   req.url += '.gz';
@@ -75,7 +109,9 @@ app.post('/hostInfo', (req, res) => {
 });
 
 // CRUD - Read
-app.get('/hostInfo/:hostId', (req, res) => {
+// cache the route with redis ----v
+// app.get('/hostinfo/:hostId', cache.route(), (req, res) => {
+app.get('/hostinfo/:hostId', (req, res) => {
   // console.log('Parameter send by id in the req: ', req.params);
   // res.status(200).send('ok');
   const query = 'SELECT * FROM hostinfo WHERE id=$1';
