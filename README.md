@@ -1,6 +1,8 @@
-## FEC Project: AirBnB Product detail clone page
+## SDC Project: AirBnB Product detail clone page backend
 
 > Host profile service built based on MERN stack.
+
+<img width="917" alt="SDC AirBnB Host Page" src="https://user-images.githubusercontent.com/3691141/105929511-9c15be00-5ffc-11eb-8712-ad9dde1711b2.png">
 
 Runs the app in development mode.
 
@@ -14,6 +16,8 @@ Open [http://localhost:3006/?id](http://localhost:3006/?id) to view it in the br
 * https://github.com/FEC-Gai/Check-In-Service
 * https://github.com/FEC-Gai/HomeDescriptionService
 * https://github.com/FEC-Gai/header-footer
+
+<img width="872" alt="AirBnB" src="https://user-images.githubusercontent.com/3691141/105929517-9e781800-5ffc-11eb-9be1-d3deda20e7e8.png">
 
 ---
 
